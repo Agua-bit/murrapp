@@ -1,26 +1,30 @@
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from pydantic import BaseModel
+from enum import Enum as PyEnum
 
 DATABASE_URL = "sqlite:///database.db"
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-
 Base = declarative_base()
-
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-class Usuario(Base):
-    __tablename__ = "usuarios"
+# Enums (si los necesitas aquí)
+class EstadoUsuario(str, PyEnum):
+    APROBADO = "Aprobado"
+    RECHAZADO = "Rechazado"
+    EN_REVISION = "En revisión"
 
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True, nullable=False)
-    password = Column(String, nullable=False)
-    tipo = Column(Integer, nullable=False, default=0) # 0 compradores / 1 vendedores
+class EstadoEntrega(str, PyEnum):
+    PENDIENTE = "Pendiente"
+    EN_CAMINO = "En camino"
+    ENTREGADO = "Entregado"
+    CANCELADO = "Cancelado"
 
-class UsuarioCreate(BaseModel):
-    email: str
-    password: str
-    tipo: int
+# Función para poblar datos iniciales
+def crear_datos():
+    # [Mantén tu función actual tal como está]
+    pass
 
-Base.metadata.create_all(bind=engine)
+if __name__ == "__main__":
+    Base.metadata.create_all(bind=engine)
+    crear_datos()
